@@ -119,7 +119,7 @@ workflow UnmappedBamToAlignedBam {
   }
 
   # MarkDuplicates and SortSam currently take too long for preemptibles if the input data is too large
-  Float gb_size_cutoff_for_preemptibles = 110.0
+  Float gb_size_cutoff_for_preemptibles = 50.0
   Boolean data_too_large_for_preemptibles = SumFloats.total_size > gb_size_cutoff_for_preemptibles
 
   # Aggregate aligned+merged flowcell BAM files and mark duplicates
