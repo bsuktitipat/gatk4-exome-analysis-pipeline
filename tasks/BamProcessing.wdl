@@ -29,21 +29,21 @@ task SortSam {
   Int disk_size = ceil(sort_sam_disk_multiplier * size(input_bam, "GiB")) + 20
 
   command {
-    java -Dsamjdk.compression_level=~{compression_level} -Xms4000m -jar /usr/gitc/picard.jar \
+    java -Dsamjdk.compression_level=~{compression_level} -Xms7000m -jar /usr/gitc/picard.jar \
       SortSam \
       INPUT=~{input_bam} \
       OUTPUT=~{output_bam_basename}.bam \
       SORT_ORDER="coordinate" \
       CREATE_INDEX=true \
       CREATE_MD5_FILE=true \
-      MAX_RECORDS_IN_RAM=300000
+      MAX_RECORDS_IN_RAM=500000
 
   }
   runtime {
     docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.3-1564508330"
     disks: "local-disk " + disk_size + " HDD"
     cpu: "1"
-    memory: "5000 MiB"
+    memory: "7500 MiB"
     preemptible: preemptible_tries
   }
   output {
