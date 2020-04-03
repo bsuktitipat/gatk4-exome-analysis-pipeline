@@ -29,12 +29,12 @@ version 1.0
 ## licensing information pertaining to the included programs.
 
 import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-pipeline/master/tasks/UnmappedBamToAlignedBam.wdl" as ToBam
-import "https://raw.githubusercontent.com/hypotheses/gatk-workflows/gatk4-exome-analysis-pipeline/master/tasks/AggregatedBamQC.wdl" as AggregatedQC
-import "https://raw.githubusercontent.com/hypotheses/gatk-workflows/gatk4-exome-analysis-pipeline/master/tasks/Qc.wdl" as QC
-import "https://raw.githubusercontent.com/hypotheses/gatk-workflows/gatk4-exome-analysis-pipeline/master/tasks/BamProcessing.wdl" as Processing
-import "https://raw.githubusercontent.com/hypotheses/gatk-workflows/gatk4-exome-analysis-pipeline/master/tasks/BamToCram.wdl" as ToCram
-import "https://raw.githubusercontent.com/hypotheses/gatk-workflows/gatk4-exome-analysis-pipeline/master/tasks/VariantCalling.wdl" as ToGvcf
-import "https://raw.githubusercontent.com/hypotheses/gatk-workflows/gatk4-exome-analysis-pipeline/master/structs/GermlineStructs.wdl"
+import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-pipeline/master/tasks/AggregatedBamQC.wdl" as AggregatedQC
+import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-pipeline/master/tasks/Qc.wdl" as QC
+import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-pipeline/master/tasks/BamProcessing.wdl" as Processing
+import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-pipeline/master/tasks/BamToCram.wdl" as ToCram
+import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-pipeline/master/tasks/VariantCalling.wdl" as ToGvcf
+import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-pipeline/master/structs/GermlineStructs.wdl"
 
 # WORKFLOW DEFINITION
 workflow ExomeGermlineSingleSample {
