@@ -238,13 +238,13 @@ task SelectVariants {
 		Int preemptible
 	}
 
-	command <<<
-		${gatk_path} SelectVariants \
+	command {
+			${gatk_path} SelectVariants \
 			-R ${RefFasta} \
 			-V ${rawVCF} \
 			--select-type ${type} \
 			-O vcf_raw.${type}.vcf
-	>>>
+	}
 
 	output {
 		File rawSubset = "vcf_raw.${type}.vcf"
@@ -273,15 +273,15 @@ task HardFilterSNP {
 		Int preemptible
 	}
 
-	command <<<
-		${gatk_path} \
+	command {
+			${gatk_path} \
 			VariantFiltration \
 			-R ${RefFasta} \
 			-V ${rawSNPs} \
 			--filter-expression " ${filterExpression} " \
 			--filter-name "snp_filter" \
 			-O vcf_filtered.snps.vcf
-	>>>
+	}
 
 	output {
 		File filteredSNPs = "vcf_filtered.snps.vcf"
@@ -310,15 +310,15 @@ task HardFilterIndel {
 		Int preemptible
 	}
 
-	command <<<
-		${gatk_path} \
+	command {
+			${gatk_path} \
 			VariantFiltration \
 			-R ${RefFasta} \
 			-V ${rawIndels} \
-			--filter-expression " ${filterExpression} " \
+			--filter-expression "${filterExpression}" \
 			--filter-name "indel_filter" \
 			-O vcf_filtered.indels.vcf
-	>>>
+	}
 	output {
 		File filteredIndels = "vcf_filtered.indels.vcf"
 	}
@@ -347,7 +347,8 @@ task CombineSnvIndel {
 	}
 	
 	command {
-		java -jar /usr/GenomeAnalysisTK.jar \
+			java -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Xms8000m \
+			-jar /usr/gitc/GATK35.jar \
 			-T CombineVariants \
 			-R ${RefFasta} \
 			-V ${filteredSNPs} \
@@ -359,9 +360,9 @@ task CombineSnvIndel {
 		File filteredVCF = "vcf_filtered.snps.indels.vcf"
 	}
     runtime {
-    	docker: docker
-	    memory: "8 GB"
-			disks: "local-disk " + disk_size + " HDD"
-	 		preemptible: preemptible
+    	docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.3-1564508330"
+    	memory: "8 GB"
+    	disks: "local-disk " + disk_size + " HDD"
+    	preemptible: preemptible
     }
 }
