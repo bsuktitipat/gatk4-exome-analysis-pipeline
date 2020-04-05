@@ -37,8 +37,8 @@ workflow VariantFiltration_HardFilter {
 	input {
 		Int disk_size = 100
 		Int preemptible = 3
-		String gatk_docker? = select_first([gatk_docker,"broadinstitute/gatk:4.0.10.1"])
-		String gatk_path? = select_first([gatk_path,"./gatk"])
+		String gatk_docker = select_first([gatk_docker,"us.gcr.io/broad-gatk/gatk:4.0.10.1"])
+		String gatk_path = select_first([gatk_path,"gatk"])
 
 		File RefFasta
 		File RefIndex
