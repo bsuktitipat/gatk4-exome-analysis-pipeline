@@ -283,11 +283,11 @@ task HardFilterSNP {
 			-V ${rawSNPs} \
 			--filter-expression " ${filterExpression} " \
 			--filter-name "snp_filter" \
-			-O vcf_filtered.snps.vcf
+			-O ${prefix}.vcf_filtered.snps.vcf
 	}
 
 	output {
-		File filteredSNPs = "vcf_filtered.snps.vcf"
+		File filteredSNPs = "${prefix}.vcf_filtered.snps.vcf"
 	}
 
     runtime {
