@@ -267,7 +267,6 @@ task HardFilterSNP {
 		File RefFasta
 		File RefIndex
 		File RefDict
-
 		File rawSNPs
 		String filterExpression
 		String gatk_path
@@ -283,11 +282,11 @@ task HardFilterSNP {
 			-V ${rawSNPs} \
 			--filter-expression " ${filterExpression} " \
 			--filter-name "snp_filter" \
-			-O ${prefix}.vcf_filtered.snps.vcf
+			-O vcf_filtered.snps.vcf
 	}
 
 	output {
-		File filteredSNPs = "${prefix}.vcf_filtered.snps.vcf"
+		File filteredSNPs = "vcf_filtered.snps.vcf"
 	}
 
     runtime {
@@ -339,10 +338,8 @@ task CombineSnvIndel {
 		File RefFasta
 		File RefIndex
 		File RefDict
-
 		File filteredSNPs
 		File filteredIndels
-
 		String prefix
         String docker
 
