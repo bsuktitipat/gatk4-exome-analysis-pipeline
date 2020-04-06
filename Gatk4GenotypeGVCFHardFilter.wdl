@@ -70,6 +70,7 @@ workflow VariantFiltration_HardFilter {
 
 	call GenotypeGVCFs {
 		input:
+			prefix = output_prefix,
 			vcf_file = CombineGVCFs.output_cohort_g_vcf,
 			RefFasta = RefFasta,
 			RefIndex = RefIndex,
@@ -108,7 +109,7 @@ workflow VariantFiltration_HardFilter {
 
 	call HardFilterSNP {
 		input:
-			rawSNPs=selectSNPs.rawSubset,
+			rawSNPs = selectSNPs.rawSubset,
 			filterExpression =	SNPfilterExpression ,
 			RefFasta = RefFasta,
 			RefIndex = RefIndex,
@@ -169,7 +170,7 @@ task CombineGVCFs {
 	}
 	
 	command {
-		${gatk_path} \
+			${gatk_path} \
 			CombineGVCFs  \
 			-R ${RefFasta} \
 			-V ${sep=' -V ' input_gvcfs} \
@@ -185,7 +186,7 @@ task CombineGVCFs {
 	}
 
 	output {
-		File output_cohort_g_vcf= "cohort.g.vcf"
+		File output_cohort_g_vcf = "cohort.g.vcf"
 	}
 
 }
