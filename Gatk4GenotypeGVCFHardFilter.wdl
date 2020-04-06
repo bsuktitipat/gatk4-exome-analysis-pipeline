@@ -39,6 +39,7 @@ workflow VariantFiltration_HardFilter {
 		Int preemptible = 3
 		String gatk_docker = select_first([gatk_docker,"us.gcr.io/broad-gatk/gatk:4.0.10.1"])
 		String gatk_path = select_first([gatk_path,"gatk"])
+        String output_prefix = select_first([output_prefix, ""])
 
 		File RefFasta
 		File RefIndex
@@ -133,7 +134,8 @@ workflow VariantFiltration_HardFilter {
 
 	call CombineSnvIndel {
 		input:
-			filteredSNPs = HardFilterSNP.filteredSNPs,
+			prefix = output_prefix,
+            filteredSNPs = HardFilterSNP.filteredSNPs,
 			filteredIndels = HardFilterIndel.filteredIndels,
 			RefFasta = RefFasta,
 			RefIndex = RefIndex,
@@ -196,6 +198,7 @@ task GenotypeGVCFs {
 		File RefFasta
 		File RefIndex
 		File RefDict
+        String prefix
 		String gatk_path
 		String docker
 		Int disk_size
@@ -207,7 +210,7 @@ task GenotypeGVCFs {
 			GenotypeGVCFs \
 			-R ${RefFasta} \
 			-V ${vcf_file} \
-			-O cohort.RAW.vcf \
+			-O ${prefix}.RAW.vcf \
 			-G StandardAnnotation
 	}
 	runtime {
@@ -219,7 +222,7 @@ task GenotypeGVCFs {
 	}
 	
 	output {
-		File output_RAW_vcf = "cohort.RAW.vcf"
+		File output_RAW_vcf = "${prefix}.RAW.vcf"
 	}
 }
 
@@ -340,7 +343,8 @@ task CombineSnvIndel {
 		File filteredSNPs
 		File filteredIndels
 
-		String docker
+		String prefix
+        String docker
 
 		Int disk_size
 		Int preemptible
@@ -354,10 +358,10 @@ task CombineSnvIndel {
 			-V ${filteredSNPs} \
 			-V ${filteredIndels} \
 			--genotypemergeoption UNSORTED \
-			-o vcf_filtered.snps.indels.vcf
+			-o ${prefix}.filtered.snps.indels.vcf
 	}
 	output {
-		File filteredVCF = "vcf_filtered.snps.indels.vcf"
+		File filteredVCF = "${prefix}.filtered.snps.indels.vcf"
 	}
     runtime {
     	docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.3-1564508330"
