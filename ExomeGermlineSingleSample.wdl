@@ -35,13 +35,26 @@ import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-pipeli
 import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-pipeline/master/tasks/BamToCram.wdl" as ToCram
 import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-pipeline/master/tasks/VariantCalling.wdl" as ToGvcf
 import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-pipeline/master/structs/GermlineStructs.wdl"
+import "https://raw.githubusercontent.com/hypotheses/gatk4-exome-analysis-piepline/master/tasks/paired-fastq-to-unmapped-bam.wdl" as ToUbam
 
-# WORKFLOW DEFINITION
+# WORKFLOW DEFINITION 
 workflow ExomeGermlineSingleSample {
 
   String pipeline_version = "1.3"
 
   input {
+    String sample_name 
+    String fastq_1 
+    String fastq_2 
+    String readgroup_name 
+    String library_name 
+    String platform_unit 
+    String run_date 
+    String platform_name 
+    String sequencing_center 
+
+    Boolean make_fofn = false
+
     PapiSettings papi_settings
     SampleAndUnmappedBams sample_and_unmapped_bams
     GermlineSingleSampleReferences references
@@ -57,6 +70,31 @@ workflow ExomeGermlineSingleSample {
   Float lod_threshold = -10.0
   String cross_check_fingerprints_by = "READGROUP"
   String recalibrated_bam_basename = sample_and_unmapped_bams.base_file_name + ".aligned.duplicates_marked.recalibrated"
+  
+  # convert to unmapped BAM from paired fastq
+   call ToUbam.PairedFastQsToUnmappedBAM {
+    input:
+      sample_name = sample_name,
+      fastq_1 = fastq_1,
+      fastq_2 = fastq_2,
+      readgroup_name = readgroup_name,
+      library_name = library_name,
+      platform_unit = platform_unit,
+      run_date = run_date,
+      platform_name = platform_name,
+      sequencing_center = sequencing_center,
+      gatk_path = gatk_path,
+      docker = gatk_docker
+  }
+
+  #Create a file with the generated ubam
+  if (make_fofn) {  
+    call ToUbam.CreateFoFN {
+      input:
+        ubam = PairedFastQsToUnmappedBAM.output_unmapped_bam,
+        fofn_name = ubam_list_name + ".ubam"
+    }
+  }
 
   call Processing.GenerateSubsettedContaminationResources {
     input:
@@ -145,6 +183,9 @@ workflow ExomeGermlineSingleSample {
 
   # Outputs that will be retained when execution is complete
   output {
+    File output_unmapped_bam = PairedFastQsToUnmappedBAM.output_unmapped_bam
+    File? unmapped_bam_list = CreateFoFN.fofn_list
+
     Array[File] quality_yield_metrics = UnmappedBamToAlignedBam.quality_yield_metrics
 
     Array[File] unsorted_read_group_base_distribution_by_cycle_pdf = UnmappedBamToAlignedBam.unsorted_read_group_base_distribution_by_cycle_pdf
